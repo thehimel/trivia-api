@@ -23,6 +23,7 @@ This project depends on Nodejs and Node Package Manager (NPM). Before continuing
 This project uses NPM to manage software dependencies. NPM Relies on the package.json file located in the frontend directory of this repository. After cloning, open your terminal and run:
 
 `npm install`
+
 > tip: npm i is shorthand for npm install
 
 #### Running Your Frontend in Dev Mode
@@ -54,6 +55,7 @@ This will install all of the required packages we selected within the requiremen
 
 #### Database Setup
 With Postgres running, restore a database using the trivia.psql file provided. From the backend folder in terminal run:
+
 `psql trivia < trivia.psql`
 
 #### Running the server
@@ -90,5 +92,5 @@ Refer to the api_readme.md
 * Caryn McCarthy
 
 ## Acknowledgements
-The incredible team at Udacity.
-Special thanks to Caryn McCarthy for her extraordinary teaching style and aesthetic guidance.
+* The incredible team at Udacity.
+* Special thanks to Caryn McCarthy for her extraordinary teaching style and aesthetic guidance.
