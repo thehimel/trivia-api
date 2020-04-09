@@ -82,7 +82,7 @@ python test_flaskr.py`
 All tests are kept in that file and should be maintained as updates are made to app functionality.
 
 ## API Reference
-Refer to the api_readme.md
+Refer to the [API-README.md](https://github.com/thehimel/trivia-api/blob/master/API-README.md)
 
 ## Deployment N/A
 
