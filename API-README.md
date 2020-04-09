@@ -256,11 +256,161 @@ Response:
 }
 ```
 
+#### Get all categories
+
+`curl http://127.0.0.1:5000/categories`
+
+Response:
+
+```
+{
+  "categories": [
+    "Science",
+    "Art",
+    "Geography",
+    "History",
+    "Entertainment",
+    "Sports"
+  ],
+  "success": true,
+  "total_categories": 6
+}
+```
+
+#### Create a question
+
+`curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d '{"question":"What is the closest planet to the Sun?", "answer":" Mercury", "difficulty":"2", "category":"1"}'`
+
+Request:
+
+`{'question': 'What is the closest planet to the Sun?', 'answer': ' Mercury', 'difficulty': '2', 'category': '1'}`
+
+Response:
+
+```
+{
+  "question": "What is the closest planet to the Sun?",
+  "question_id": 32,
+  "success": true
+}
+```
+
+#### Delete a question
+
+`curl -X DELETE http://127.0.0.1:5000/questions/2`
+
+Response:
+
+```
+{
+  "deleted": 2,
+  "success": true
+}
+```
+
+#### Search
+
+`curl http://127.0.0.1:5000/searchquestions -X POST -H "Content-Type: application/json" -d '{"searchTerm":"who"}'`
+
+Request:
+
+```
+{'searchTerm': 'who'}
+```
+
+Response:
+```
+{
+  "current_category": "Science",
+  "questions": [
+    {
+      "answer": "Alexander Fleming",
+      "category": 0,
+      "difficulty": 3,
+      "id": 17,
+      "question": "Who discovered penicillin?"
+    },
+    {
+      "answer": "Maya Angelou",
+      "category": 3,
+      "difficulty": 2,
+      "id": 1,
+      "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+    },
+    {
+      "answer": "George Washington Carver",
+      "category": 3,
+      "difficulty": 2,
+      "id": 8,
+      "question": "Who invented Peanut Butter?"
+    }
+  ],
+  "success": true,
+  "total_questions": 3
+}
+```
 
 
+#### Get all questions from a category
 
+`curl http://127.0.0.1:5000/categories/2/questions`
 
+Response:
 
+```
+{
+  "current_category": "Geography",
+  "questions": [
+    {
+      "answer": "Lake Victoria",
+      "category": 2,
+      "difficulty": 2,
+      "id": 9,
+      "question": "What is the largest lake in Africa?"
+    },
+    {
+      "answer": "The Palace of Versailles",
+      "category": 2,
+      "difficulty": 3,
+      "id": 10,
+      "question": "In which royal palace would you find the Hall of Mirrors?"
+    },
+    {
+      "answer": "Agra",
+      "category": 2,
+      "difficulty": 2,
+      "id": 11,
+      "question": "The Taj Mahal is located in which Indian city?"
+    }
+  ],
+  "success": true,
+  "total_questions": 3
+}
+```
 
+#### Get a quiz
 
+`curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -d '{"previous_questions": [12, 14, 10], "quiz_category": {"type": "Art", "id": "1"}}'`
+
+Request:
+
+```
+{'previous_questions': [12, 14, 10], 'quiz_category': {'type': 'Art', 'id': '1'}}
+```
+
+Response:
+
+```
+{
+  "current_category": "Art",
+  "question": {
+    "answer": " Mercury",
+    "category": 1,
+    "difficulty": 2,
+    "id": 31,
+    "question": "What is the closest planet to the Sun?"
+  },
+  "success": true
+}
+```
 
