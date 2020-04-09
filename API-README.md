@@ -1,7 +1,18 @@
 ## API Reference
+
 ### Getting Started
 - Base URL: At present this app can only be run locally and is not hosted as a base URL. The backend app is hosted at the default, http://127.0.0.1:5000/, which is set as a proxy in the frontend configuration.
 - Authentication: This version of the application does not require authentication or API keys.
+
+### Features
+* Endpoint to handle GET requests for questions, including pagination (every 10 questions). This endpoint returns a list of questions, number of total questions, current category, categories.
+* Endpoint to handle GET requests for all available categories.
+* Endpoint to DELETE question using a question ID.
+* Endpoint to POST a new question, which requires the question and answer text, category, and difficulty score.
+* POST endpoint to get questions based on category.
+* POST endpoint to get questions based on a search term. It returns any question(s) for whom the search term is a substring of the question.
+* POST endpoint to get questions to play the quiz. This endpoint takes category and previous question parameters and returns a random questions within the given category, if provided, and that is not one of the previous questions.
+
 ### Error Handling
 Errors are returned as JSON objects in the following format:
 
