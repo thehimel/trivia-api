@@ -166,7 +166,7 @@ curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -
 
 `curl http://127.0.0.1:5000/questions`
 
-- Response:
+Response:
 
 ```
 {
@@ -254,9 +254,9 @@ curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -
   "success": true, 
   "total_questions": 19
 }
-
-
 ```
+
+
 
 
 
