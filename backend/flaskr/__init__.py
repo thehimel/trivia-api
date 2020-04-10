@@ -16,17 +16,6 @@ def format_questions(all_questions):
     return formatted_questions
 
 
-def paginate_questions(request, all_questions):
-    # if page is not given than default value is 1
-    page = request.args.get('page', 1, type=int)
-    start = (page-1) * QUESTIONS_PER_PAGE
-    end = start + QUESTIONS_PER_PAGE
-
-    # export questions according to the start and end of the current page
-    questions_in_range = all_questions[start:end]
-    return questions_in_range
-
-
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
@@ -55,6 +44,31 @@ def create_app(test_config=None):
         return response
 
     '''
+    GET '/categories'
+    - Fetches a dictionary of categories in which the keys are the ids
+        and the value is the corresponding string of the category
+    - Request Arguments: None
+    - Returns: An object with a single key, categories,
+        that contains a object of id: category_string key:value pairs.
+    {'1' : "Science",
+    '2' : "Art",
+    '3' : "Geography",
+    '4' : "History",
+    '5' : "Entertainment",
+    '6' : "Sports"}
+    '''
+
+    def formatted_categories():
+        # get all categories
+        all_categories = Category.query.order_by(Category.id).all()
+
+        categories = {}
+        for category in all_categories:
+            categories[category.id] = category.type
+
+        return categories
+
+    '''
     @TODO:
     Create an endpoint to handle GET requests
     for all available categories.
@@ -63,16 +77,14 @@ def create_app(test_config=None):
     # Get all categories
     @app.route('/categories')
     def get_categories():
-        # get all categories
-        all_categories = Category.query.order_by(Category.id).all()
-
-        # make a list with the categories. Ex.: ['Science', 'History']
-        category_types = [category.type for category in all_categories]
+        # Get the categories as a dictionay of {id: type, id: type}
+        categories = formatted_categories()
+        total_categories = len(categories)
 
         data = {
             'success': True,
-            'categories': category_types,
-            'total_categories': len(category_types)
+            'categories': formatted_categories(),
+            'total_categories': total_categories
         }
 
         # send data in json format
@@ -95,20 +107,23 @@ def create_app(test_config=None):
     @app.route('/questions')
     def get_questions():
         try:
-            # order by the category_id
-            all_questions = Question.query.order_by(Question.category_id).all()
+            # Get the parameter page from the request and by default page=1
+            page = request.args.get('page', 1, type=int)
 
-            # get the questions according to the page number
-            questions_in_range = paginate_questions(request, all_questions)
+            # Get the questions in the form of Pagination object
+            # according to the page number
+            questions_in_range_obj = Question.query.order_by(
+                Question.category_id).paginate(
+                    per_page=QUESTIONS_PER_PAGE, page=page, error_out=True)
+
+            # Get the total number of questions from the Pagination object
+            total_questions = questions_in_range_obj.total
+
+            # Get the items from the Pagination object
+            questions_in_range = questions_in_range_obj.items
 
             # format the questions
             formatted_questions = format_questions(questions_in_range)
-
-            # get all categories
-            all_categories = Category.query.order_by(Category.id).all()
-
-            # make a list with the categories. Ex.: ['Science', 'History']
-            category_types = [category.type for category in all_categories]
 
             # if there is no exported questions,
             # that means no questions is found.
@@ -122,11 +137,14 @@ def create_app(test_config=None):
             # get the category type of the 1st question. Ex.: 'Science'
             current_category_type = current_category.type
 
+            # Get the categories as a dictionay of {id: type, id: type}
+            categories = formatted_categories()
+
             data = {
                 'success': True,
                 'questions': formatted_questions,
-                'total_questions': len(all_questions),
-                'categories': category_types,
+                'total_questions': total_questions,
+                'categories': categories,
                 'current_category': current_category_type
             }
 
@@ -188,8 +206,10 @@ def create_app(test_config=None):
             # Create request:
 
             """
-            # "POST /questions HTTP/1.1" 200 -
-            {'question': '', 'answer': '', 'difficulty': 1, 'category': 1}
+            "POST /questions HTTP/1.1" 200 -
+
+            {'question': 'What is the closest planet to the Sun?',
+            'answer': ' Mercury', 'difficulty': '2', 'category': '1'}
             """
 
             body = request.get_json()
@@ -199,10 +219,7 @@ def create_app(test_config=None):
             question = body.get('question', '')
             answer = body.get('answer', '')
             difficulty = int(body.get('difficulty'))
-
-            # Frontend sends 0 for category 1, 5 for category 6.
-            # Thus id = id + 1
-            category_id = int(body.get('category')) + 1
+            category_id = int(body.get('category'))
 
             # get the category from the category id to use during insertion
             category = Category.query.get(category_id)
@@ -246,11 +263,14 @@ def create_app(test_config=None):
     @app.route('/searchquestions', methods=['POST'])
     def search_questions():
         try:
+            # Get the parameter page from the request and by default page=1
+            page = request.args.get('page', 1, type=int)
+
             # Search request:
 
             """
             "POST /questions HTTP/1.1" 200 -
-            {'searchTerm': 'penicilin'}
+            {'searchTerm': 'who'}
             """
 
             body = request.get_json()
@@ -261,22 +281,22 @@ def create_app(test_config=None):
             # to return all questions. Else it will crash.
             search_item = body.get('searchTerm', '')
 
+            # Get the questions in the form of Pagination object
+            # according to the page number
             # order by the category_id
-            all_questions = Question.query.order_by(
-                Question.category_id).filter(
-                    Question.question.ilike('%{}%'.format(search_item))).all()
+            questions_in_range_obj = Question.query.order_by(
+                Question.category_id).filter(Question.question.ilike(
+                    '%{}%'.format(search_item))).paginate(
+                        per_page=QUESTIONS_PER_PAGE, page=page, error_out=True)
 
-            # get the questions according to the page number
-            questions_in_range = paginate_questions(request, all_questions)
+            # Get the total number of questions from the Pagination object
+            total_questions = questions_in_range_obj.total
+
+            # Get the items from the Pagination object
+            questions_in_range = questions_in_range_obj.items
 
             # format the questions
             formatted_questions = format_questions(questions_in_range)
-
-            # get all categories
-            all_categories = Category.query.order_by(Category.id).all()
-
-            # make a list with the categories. Ex.: ['Science', 'History']
-            category_types = [category.type for category in all_categories]
 
             # if there is questions in range, return this
             if len(questions_in_range) > 0:
@@ -289,7 +309,7 @@ def create_app(test_config=None):
                 data = {
                     'success': True,
                     'questions': formatted_questions,
-                    'total_questions': len(all_questions),
+                    'total_questions': total_questions,
                     'current_category': current_category_type
                 }
 
@@ -299,7 +319,7 @@ def create_app(test_config=None):
                     'success': True,
                     'questions': [],
                     'total_questions': 0,
-                    'current_category': category_types[0]
+                    'current_category': None
                 }
 
             # send data in json format
@@ -318,19 +338,24 @@ def create_app(test_config=None):
     '''
 
     # Get questions from a category
-    @app.route('/categories/<int:id>/questions')
-    def get_questions_from_category(id):
+    @app.route('/categories/<int:category_id>/questions')
+    def get_questions_from_category(category_id):
         try:
-            # in frontend the id starts from 0.
-            # Ex. to get category 1, frontend sends 0. Thus increment by 1.
-            id = id + 1
+            # Get the parameter page from the request and by default page=1
+            page = request.args.get('page', 1, type=int)
 
-            # order by the Question.id
-            all_questions = Question.query.order_by(Question.id).filter(
-                Question.category_id == id).all()
+            # Get the questions in the form of Pagination object
+            # according to the page number
+            questions_in_range_obj = Question.query.order_by(
+                Question.category_id).filter(
+                Question.category_id == category_id).paginate(
+                    per_page=QUESTIONS_PER_PAGE, page=page, error_out=True)
 
-            # get the questions according to the page number
-            questions_in_range = paginate_questions(request, all_questions)
+            # Get the total number of questions from the Pagination object
+            total_questions = questions_in_range_obj.total
+
+            # Get the items from the Pagination object
+            questions_in_range = questions_in_range_obj.items
 
             # format the questions
             formatted_questions = format_questions(questions_in_range)
@@ -341,7 +366,7 @@ def create_app(test_config=None):
                 abort(404)
 
             # get the category from category_id
-            current_category = Category.query.get(id)
+            current_category = Category.query.get(category_id)
 
             # get the category type of the 1st question. Ex.: 'Science'
             current_category_type = current_category.type
@@ -349,7 +374,7 @@ def create_app(test_config=None):
             data = {
                 'success': True,
                 'questions': formatted_questions,
-                'total_questions': len(all_questions),
+                'total_questions': total_questions,
                 'current_category': current_category_type
             }
 
@@ -377,7 +402,7 @@ def create_app(test_config=None):
         try:
 
             """
-            Post Body: {'previous_questions': [12, 14, 10], 'quiz_category':
+            POST Body: {'previous_questions': [12, 14, 10], 'quiz_category':
                 {'type': 'Art', 'id': '1'}}
             """
 
@@ -391,12 +416,8 @@ def create_app(test_config=None):
 
             # get the id from the dictionary of quiz category
             # if the user selects All, the frontend sends 0 as the category id
-            # make sure to conver the category id to int
-            # To get category 1, frontend sends 0. To get category 2,
-            # frontend sends 1. Thus we need to increment the id by 1.
-            # Thus id = id + 1
+            # make sure to convert the category id to int
             category_id = int(quiz_category['id'])
-            category_id = category_id + 1
 
             # use print to debug
             # print(body)

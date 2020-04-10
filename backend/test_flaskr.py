@@ -57,7 +57,7 @@ class TriviaTestCase(unittest.TestCase):
         # To avoid False in that case, use type comparison
         self.assertEqual(type(data['total_questions']), int)
         self.assertEqual(type(data['questions']), list)
-        self.assertEqual(type(data['categories']), list)
+        self.assertEqual(type(data['categories']), dict)
         self.assertEqual(type(data['current_category']), str)
 
     # Try to hit the /questions endpoint with page number out of limit
@@ -85,6 +85,7 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
+        self.assertEqual(type(data['categories']), dict)
         self.assertTrue(data['total_categories'])
 
     # Try to hit the /categories with POST request where POST is not allowed
@@ -109,12 +110,11 @@ class TriviaTestCase(unittest.TestCase):
     # Try to get a random question with the given category
     def test_get_quiz(self):
         body = {
-            'previous_questions': [12, 14, 10],
-            'quiz_category': {
-                'type': 'Art',
-                'id': '1'
-                }
+            "previous_questions": [12, 14, 13],
+            "quiz_category": {
+                "type": "Art", "id": "2"
             }
+        }
         res = self.client().post('/quizzes', json=body)
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
@@ -125,7 +125,7 @@ class TriviaTestCase(unittest.TestCase):
     # Try to search questions
     def test_search_questions(self):
         body = {
-            'searchTerm': 'who'
+            "searchTerm": "who"
         }
         res = self.client().post('/searchquestions', json=body)
         data = json.loads(res.data)
@@ -154,10 +154,10 @@ class TriviaTestCase(unittest.TestCase):
 
         question = random_string
         body = {
-            'question': question,
-            'answer': 'The Answer',
-            'difficulty': 1,
-            'category': 2
+            "question": question,
+            "answer": "The Answer",
+            "difficulty": 1,
+            "category": 2
         }
 
         res = self.client().post('/questions', json=body)
