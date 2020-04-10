@@ -39,7 +39,7 @@ The API will return the following error types when requests fail:
 		- Success value (bool)
 		- A list of questions (list)
 		- Total number of questions (int)
-		- A list of categories (list)
+		- A dictionary of categories as {"id": "type", "id": "type"} (dict)
 		- Current category (str)
 	- Results are paginated in groups of 10. Include a request argument to choose page number, starting from 1.
 
@@ -51,10 +51,10 @@ The API will return the following error types when requests fail:
 - General:
 	- Returns the list of all categories
 	- Takes
-		- 	N/A
+		- N/A
 	- Returns
 		- Success value (bool)
-		- A list of categories (list)
+		- A dictionary of categories as {"id": "type", "id": "type"}
 		- Total number of categories (int)
 
 - ` curl http://127.0.0.1:5000/categories`
@@ -103,7 +103,7 @@ The API will return the following error types when requests fail:
 
 - `curl http://127.0.0.1:5000/searchquestions?page=2 -X POST -H "Content-Type: application/json" -d '{"searchTerm":"who"}'`
 
-#### GET /categories/{id}/questions
+#### GET /categories/{category_id}/questions
 - General:
 	- Get all questions of the category from the given category id
 	- Takes
@@ -114,7 +114,6 @@ The API will return the following error types when requests fail:
 		- Success value (bool)
 		- A list of questions (list)
 		- Total number of questions (int)
-		- A list of categories (list)
 		- Current category (str)
 	- Results are paginated in groups of 10. Include a request argument to choose page number, starting from 1.
 
@@ -181,82 +180,82 @@ Response:
 
 ```
 {
-  "categories": [
-    "Science", 
-    "Art", 
-    "Geography", 
-    "History", 
-    "Entertainment", 
-    "Sports"
-  ], 
+  "categories": {
+    "1": "Science", 
+    "2": "Art", 
+    "3": "Geography", 
+    "4": "History", 
+    "5": "Entertainment", 
+    "6": "Sports"
+  }, 
   "current_category": "Science", 
   "questions": [
     {
       "answer": "Alexander Fleming", 
-      "category": 0, 
+      "category": 1, 
       "difficulty": 3, 
       "id": 17, 
       "question": "Who discovered penicillin?"
     }, 
     {
       "answer": "Blood", 
-      "category": 0, 
+      "category": 1, 
       "difficulty": 4, 
       "id": 18, 
       "question": "Hematology is a branch of medicine involving the study of what?"
     }, 
     {
       "answer": "The Liver", 
-      "category": 0, 
+      "category": 1, 
       "difficulty": 4, 
       "id": 16, 
       "question": "What is the heaviest organ in the human body?"
     }, 
     {
       "answer": "Jackson Pollock", 
-      "category": 1, 
+      "category": 2, 
       "difficulty": 2, 
       "id": 15, 
       "question": "Which American artist was a pioneer of Abstract Expressionism, and a leading exponent of action painting?"
     }, 
     {
       "answer": "One", 
-      "category": 1, 
+      "category": 2, 
       "difficulty": 4, 
       "id": 14, 
       "question": "How many paintings did Van Gogh sell in his lifetime?"
     }, 
     {
       "answer": "Escher", 
-      "category": 1, 
+      "category": 2, 
       "difficulty": 1, 
       "id": 12, 
       "question": "Which Dutch graphic artist-initials M C was a creator of optical illusions?"
     }, 
     {
       "answer": "Mona Lisa", 
-      "category": 1, 
+      "category": 2, 
       "difficulty": 3, 
       "id": 13, 
       "question": "La Giaconda is better known as what?"
     }, 
     {
       "answer": "The Palace of Versailles", 
-      "category": 2, 
+      "category": 3, 
       "difficulty": 3, 
       "id": 10, 
       "question": "In which royal palace would you find the Hall of Mirrors?"
     }, 
     {
       "answer": "Lake Victoria", 
-      "category": 2, 
+      "category": 3, 
       "difficulty": 2, 
       "id": 9, 
       "question": "What is the largest lake in Africa?"
     }, 
     {
       "answer": "Agra", 
-      "category": 2, 
+      "category": 3, 
       "difficulty": 2, 
       "id": 11, 
       "question": "The Taj Mahal is located in which Indian city?"
@@ -275,15 +274,15 @@ Response:
 
 ```
 {
-  "categories": [
-    "Science",
-    "Art",
-    "Geography",
-    "History",
-    "Entertainment",
-    "Sports"
-  ],
-  "success": true,
+  "categories": {
+    "1": "Science", 
+    "2": "Art", 
+    "3": "Geography", 
+    "4": "History", 
+    "5": "Entertainment", 
+    "6": "Sports"
+  }, 
+  "success": true, 
   "total_categories": 6
 }
 ```
@@ -336,21 +335,21 @@ Response:
   "questions": [
     {
       "answer": "Alexander Fleming",
-      "category": 0,
+      "category": 1,
       "difficulty": 3,
       "id": 17,
       "question": "Who discovered penicillin?"
     },
     {
       "answer": "Maya Angelou",
-      "category": 3,
+      "category": 4,
       "difficulty": 2,
       "id": 1,
       "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
     },
     {
       "answer": "George Washington Carver",
-      "category": 3,
+      "category": 4,
       "difficulty": 2,
       "id": 8,
       "question": "Who invented Peanut Butter?"
@@ -359,6 +358,7 @@ Response:
   "success": true,
   "total_questions": 3
 }
+
 ```
 
 
@@ -370,43 +370,50 @@ Response:
 
 ```
 {
-  "current_category": "Geography",
+  "current_category": "Art", 
   "questions": [
     {
-      "answer": "Lake Victoria",
-      "category": 2,
-      "difficulty": 2,
-      "id": 9,
-      "question": "What is the largest lake in Africa?"
-    },
+      "answer": "Escher", 
+      "category": 2, 
+      "difficulty": 1, 
+      "id": 12, 
+      "question": "Which Dutch graphic artist-initials M C was a creator of optical illusions?"
+    }, 
     {
-      "answer": "The Palace of Versailles",
-      "category": 2,
-      "difficulty": 3,
-      "id": 10,
-      "question": "In which royal palace would you find the Hall of Mirrors?"
-    },
+      "answer": "Mona Lisa", 
+      "category": 2, 
+      "difficulty": 3, 
+      "id": 13, 
+      "question": "La Giaconda is better known as what?"
+    }, 
     {
-      "answer": "Agra",
-      "category": 2,
-      "difficulty": 2,
-      "id": 11,
-      "question": "The Taj Mahal is located in which Indian city?"
+      "answer": "One", 
+      "category": 2, 
+      "difficulty": 4, 
+      "id": 14, 
+      "question": "How many paintings did Van Gogh sell in his lifetime?"
+    }, 
+    {
+      "answer": "Jackson Pollock", 
+      "category": 2, 
+      "difficulty": 2, 
+      "id": 15, 
+      "question": "Which American artist was a pioneer of Abstract Expressionism, and a leading exponent of action painting?"
     }
-  ],
-  "success": true,
-  "total_questions": 3
+  ], 
+  "success": true, 
+  "total_questions": 4
 }
 ```
 
 #### Get a quiz
 
-`curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -d '{"previous_questions": [12, 14, 10], "quiz_category": {"type": "Art", "id": "1"}}'`
+`curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -d '{"previous_questions": [12, 14, 10], "quiz_category": {"type": "Art", "id": "2"}}'`
 
 Request:
 
 ```
-{'previous_questions': [12, 14, 10], 'quiz_category': {'type': 'Art', 'id': '1'}}
+{'previous_questions': [12, 14, 10], 'quiz_category': {'type': 'Art', 'id': '2'}}
 ```
 
 Response:
@@ -415,13 +422,14 @@ Response:
 {
   "current_category": "Art",
   "question": {
-    "answer": " Mercury",
-    "category": 1,
+    "answer": "Jackson Pollock",
+    "category": 2,
     "difficulty": 2,
-    "id": 31,
-    "question": "What is the closest planet to the Sun?"
+    "id": 15,
+    "question": "Which American artist was a pioneer of Abstract Expressionism, and a leading exponent of action painting?"
   },
   "success": true
 }
+
 ```
 
