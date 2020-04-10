@@ -54,7 +54,7 @@ The API will return the following error types when requests fail:
 		- N/A
 	- Returns
 		- Success value (bool)
-		- A dictionary of categories as {"id": "type", "id": "type"}
+		- A dictionary of categories as {"id": "type", "id": "type"} (dict)
 		- Total number of categories (int)
 
 - ` curl http://127.0.0.1:5000/categories`
@@ -109,7 +109,7 @@ The API will return the following error types when requests fail:
 	- Takes
 		- Category id as part of the URI (int)
 		- Page number as URI parameter (int) [optional]
-		- Example: /categories/{id}/questions?page=2
+		- Example: /categories/{category_id}/questions?page=2
 	- Returns
 		- Success value (bool)
 		- A list of questions (list)
@@ -408,12 +408,12 @@ Response:
 
 #### Get a quiz
 
-`curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -d '{"previous_questions": [12, 14, 10], "quiz_category": {"type": "Art", "id": "2"}}'`
+`curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -d '{"previous_questions": [12, 14, 13], "quiz_category": {"type": "Art", "id": "2"}}'`
 
 Request:
 
 ```
-{'previous_questions': [12, 14, 10], 'quiz_category': {'type': 'Art', 'id': '2'}}
+{'previous_questions': [12, 14, 13], 'quiz_category': {'type': 'Art', 'id': '2'}}
 ```
 
 Response:
