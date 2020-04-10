@@ -84,7 +84,8 @@ All tests are kept in that file and should be maintained as updates are made to 
 ## API Reference
 Refer to the [API-README.md](https://github.com/thehimel/trivia-api/blob/master/API-README.md)
 
-## Screenshots [Click here](https://github.com/thehimel/trivia-api/blob/master/screenshots/README.md)
+## Screenshots
+[Click here](https://github.com/thehimel/trivia-api/blob/master/screenshots/README.md)
 
 ## Deployment N/A
 
