@@ -1,10 +1,11 @@
-import os
+# import os
 import unittest
 import json
 from flask_sqlalchemy import SQLAlchemy
 
 from flaskr import create_app
-from models import setup_db, Question, Category
+from models import setup_db
+# from models import Question, Category
 
 # To generate random string
 import random
@@ -23,7 +24,8 @@ class TriviaTestCase(unittest.TestCase):
         self.username = "admin"
         self.password = "abc123"
         self.host_port = "localhost:5432"
-        self.database_path = "postgres://{}:{}@{}/{}".format(self.username, self.password, self.host_port, self.database_name)
+        self.database_path = "postgres://{}:{}@{}/{}".format(
+            self.username, self.password, self.host_port, self.database_name)
 
         setup_db(self.app, self.database_path)
 
@@ -33,29 +35,33 @@ class TriviaTestCase(unittest.TestCase):
             self.db.init_app(self.app)
             # create all tables
             self.db.create_all()
-    
+
     def tearDown(self):
         """Executed after reach test"""
         pass
-    
+
     """
     TODO
-    Write at least one test for each test for successful operation and for expected errors.
+    Write at least one test for each test for successful operation
+    and for expected errors.
     """
-    # try to get all questions with no page number given and default page=1 is taken automatically
+    # Try to get all questions with no page number given
+    # and default page=1 is taken automatically
     def test_get_paginated_questions(self):
         res = self.client().get('/questions')
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        # where there is no question, endpoint will return total_questions = 0. To avoid False in that case, use type comparison
+        # Where there is no question, endpoint will return total_questions = 0.
+        # To avoid False in that case, use type comparison
         self.assertEqual(type(data['total_questions']), int)
         self.assertEqual(type(data['questions']), list)
         self.assertEqual(type(data['categories']), list)
         self.assertEqual(type(data['current_category']), str)
 
-    # try to hit the /questions endpoint with page number out of limit and get the 404 reply
+    # Try to hit the /questions endpoint with page number out of limit
+    # and get the 404 reply
     def test_404_sent_requesting_beyond_valid_page(self):
         res = self.client().get('/questions?page=9999999')
         data = json.loads(res.data)
@@ -63,25 +69,25 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'resource not found')
-    
+
     def test_422_delete_question_with_invalid_id(self):
         res = self.client().delete('/questions/{}'.format(99999999))
         data = json.loads(res.data)
-        
+
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'unprocessable')
-    
-    # try to get all the categories with get request
+
+    # Try to get all the categories with get request
     def test_get_all_categories(self):
         res = self.client().get('/categories')
         data = json.loads(res.data)
-        
+
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(data['total_categories'])
-    
-    # try to hit the /categories with POST request where POST is not allowed
+
+    # Try to hit the /categories with POST request where POST is not allowed
     def test_405_on_all_categories(self):
         res = self.client().post('/categories')
         data = json.loads(res.data)
@@ -89,8 +95,8 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 405)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'method not allowed')
-    
-    # try to get all questions based on the category
+
+    # Try to get all questions based on the category
     def test_get_questions_from_category(self):
         res = self.client().get('/categories/2/questions')
         data = json.loads(res.data)
@@ -99,12 +105,12 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertTrue(data['total_questions'])
         self.assertEqual(type(data['current_category']), str)
-    
-    # try to get a random question with the given category
+
+    # Try to get a random question with the given category
     def test_get_quiz(self):
         body = {
             'previous_questions': [12, 14, 10],
-            'quiz_category':{
+            'quiz_category': {
                 'type': 'Art',
                 'id': '1'
                 }
@@ -115,8 +121,8 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertEqual(type(data['question']), dict)
         self.assertEqual(type(data['current_category']), str)
-    
-    # try to search questions
+
+    # Try to search questions
     def test_search_questions(self):
         body = {
             'searchTerm': 'who'
@@ -129,22 +135,22 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(type(data['questions']), list)
         self.assertTrue(data['total_questions'])
         self.assertEqual(type(data['current_category']), str)
-    
-    # test 400 with no given body to search
+
+    # Test 400 with no given body to search
     def test_400_sent_no_body_in_search(self):
         res = self.client().post('/searchquestions')
         data = json.loads(res.data)
-        
+
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'bad request')
-    
-    # test create question with random string as question as multiple entry in not allowed
+
+    # Test create question with random string as multiple entry is not allowed
     def test_create_question(self):
         # generate a string of length 10 to get a random question
-        string_length = 10
+        length = 10
         letters = string.ascii_letters
-        random_string = ''.join(random.choice(letters) for i in range(string_length))
+        random_string = ''.join(random.choice(letters) for i in range(length))
 
         question = random_string
         body = {
@@ -153,15 +159,15 @@ class TriviaTestCase(unittest.TestCase):
             'difficulty': 1,
             'category': 2
         }
-        
-        res = self.client().post('/questions', json = body)
+
+        res = self.client().post('/questions', json=body)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertEqual(data['question'], question)
         self.assertTrue(data['question_id'])
-        
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
