@@ -168,7 +168,7 @@ curl http://127.0.0.1:5000/categories/2/questions?page=1
 curl http://127.0.0.1:5000/categories/2/questions?page=2
 
 # Get a quiz
-curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -d '{"previous_questions": [12, 14, 10], "quiz_category": {"type": "Art", "id": "1"}}'
+curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -d '{"previous_questions": [12, 14, 13], "quiz_category": {"type": "Art", "id": "1"}}'
 ```
 
 ### Endpoint Request and Response Samples
