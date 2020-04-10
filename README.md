@@ -1,5 +1,5 @@
 # Full Stack API Final Project
-## Udacitrivia powered by Trivia API
+## Trivia API for Udacitrivia
 Few Udacity members came up with an idea to create an app where users can play a game with Quizzes. The app is named as Udacitrivia. With an interesting frontend, the app needs a powerful RESTful API that can make the app's backend robust.
 As part of Full-Stack Developer Nanodegree Program at Udacity, I got an opportunity to develop the Trivia API for Udacitrivia.
 Trivia is an API based on the REST principles taught in this nanodegree program. Web development is always fun for me. And developing RESTful API is a dynamic experience that gives me immense pleasure. While developing the Trivia API, I learned a lot of things regarding REST principles that motivated me to work with a great spirit in this project.
